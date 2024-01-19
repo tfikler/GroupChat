@@ -44,6 +44,10 @@ public class GroupChat {
             return clientName;
         }
 
+        public String getPort() {
+            return Integer.toString(socket.getPort());
+        }
+
         public void setClientName(String clientName) {
             this.clientName = clientName;
         }
@@ -53,7 +57,7 @@ public class GroupChat {
         }
 
         public String getIPAndNameFormattedForPrint() {
-            return " ( " + clientName + " [ " + getIpAddress() + " ] ) ";
+            return "(" + clientName + " [" + getIpAddress() + ":" + getPort() + "])";
         }
 
         public void close() throws IOException {
@@ -82,7 +86,7 @@ public class GroupChat {
                 client.sendMessage("Welcome to RUNI Computer Networks 2024 chat server! There are " + clients.size() + " users connected.");
                 client.sendMessage("Please enter your nickname: ");
                 client.setClientName(reader.readLine());
-                System.out.println("New client has joined to the party! AKA:" + client.getIPAndNameFormattedForPrint());
+                System.out.println("New client has joined to the party! AKA: " + client.getIPAndNameFormattedForPrint());
 
                 // Notify other clients about the new connection
                 for (Client otherClient : clients) {
@@ -96,7 +100,7 @@ public class GroupChat {
                     // Broadcast the message to all clients
                     for (Client otherClient : clients) {
                         if (otherClient != client) {
-                            otherClient.sendMessage(client.getIPAndNameFormattedForPrint()+ ": " + message);
+                            otherClient.sendMessage(client.getIPAndNameFormattedForPrint()+ ": " + message + "\n");
                         } else {
                             otherClient.sendMessage("(You): " + message);
                         }
@@ -112,6 +116,7 @@ public class GroupChat {
                 // Notify other clients about the disconnection
                 for (Client otherClient : clients) {
                     otherClient.sendMessage(client.getIPAndNameFormattedForPrint() + " left");
+                    otherClient.sendMessage("There are " + clients.size() + " users connected.");
                 }
                 try {
                     client.close();
