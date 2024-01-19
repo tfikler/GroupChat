@@ -52,6 +52,9 @@ public class GroupChat {
             return socket.getInetAddress().getHostAddress();
         }
 
+        public String getIPAndNameFormattedForPrint() {
+            return " ( " + clientName + " [ " + getIpAddress() + " ] ) ";
+        }
 
         public void close() throws IOException {
             socket.close();
@@ -78,14 +81,13 @@ public class GroupChat {
                 // Send welcome message to the new client
                 client.sendMessage("Welcome to RUNI Computer Networks 2024 chat server! There are " + clients.size() + " users connected.");
                 client.sendMessage("Please enter your nickname: ");
-                String clientName = reader.readLine();
-                client.setClientName(clientName);
-                System.out.println("New client has joined to the party! His name is " + client.getClientName() + " with address " + client.getIpAddress());
+                client.setClientName(reader.readLine());
+                System.out.println("New client has joined to the party! AKA:" + client.getIPAndNameFormattedForPrint());
 
                 // Notify other clients about the new connection
                 for (Client otherClient : clients) {
                     if (otherClient != client) {
-                        otherClient.sendMessage(client.getIpAddress() + " joined");
+                        otherClient.sendMessage(client.getIPAndNameFormattedForPrint() + " has joined to the chat!");
                     }
                 }
 
@@ -94,7 +96,7 @@ public class GroupChat {
                     // Broadcast the message to all clients
                     for (Client otherClient : clients) {
                         if (otherClient != client) {
-                            otherClient.sendMessage("(" + client.getClientName() + "): " + message);
+                            otherClient.sendMessage(client.getIPAndNameFormattedForPrint()+ ": " + message);
                         } else {
                             otherClient.sendMessage("(You): " + message);
                         }
@@ -105,11 +107,11 @@ public class GroupChat {
             } finally {
                 // Remove the client's writer and decrement the client count
                 clients.remove(client);
-                System.out.println("Client " + client.getIpAddress() + " has left the party! (LOSER)");
+                System.out.println("Client " + client.getIPAndNameFormattedForPrint() + " has left the party! (LOSER)");
 
                 // Notify other clients about the disconnection
                 for (Client otherClient : clients) {
-                    otherClient.sendMessage(client.getIpAddress() + " left");
+                    otherClient.sendMessage(client.getIPAndNameFormattedForPrint() + " left");
                 }
                 try {
                     client.close();
