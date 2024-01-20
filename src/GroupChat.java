@@ -83,7 +83,7 @@ public class GroupChat {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
                 // Send welcome message to the new client
-                client.sendMessage("Welcome to RUNI Computer Networks 2024 chat server! There are " + clients.size() + " users connected.");
+                client.sendMessage("Welcome to RUNI Computer Networks 2024 chat server! There are " + (clients.size() - 1) + " users connected.");
                 client.sendMessage("Please enter your nickname: ");
                 client.setClientName(reader.readLine());
                 System.out.println("New client has joined to the party! AKA: " + client.getIPAndNameFormattedForPrint());
@@ -91,7 +91,7 @@ public class GroupChat {
                 // Notify other clients about the new connection
                 for (Client otherClient : clients) {
                     if (otherClient != client) {
-                        otherClient.sendMessage(client.getIPAndNameFormattedForPrint() + " has joined to the chat!");
+                        otherClient.sendMessage(client.getIpAddress() + " has joined to the chat!");
                     }
                 }
 
@@ -107,7 +107,7 @@ public class GroupChat {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                // Print error if needed
             } finally {
                 // Remove the client's writer and decrement the client count
                 clients.remove(client);
@@ -121,7 +121,7 @@ public class GroupChat {
                 try {
                     client.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    // Print error if needed
                 }
             }
         }
